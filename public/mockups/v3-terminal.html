@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V3 · Terminal — Francisco Souza</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  /* Tokens — fósforo âmbar de monitor CRT; tema verde alternável pelo comando `tema` */
+  :root{
+    --bg: oklch(0.14 0.02 70);
+    --screen: oklch(0.17 0.025 70);
+    --fg: oklch(0.83 0.16 75);       /* âmbar ~10:1 */
+    --dim: oklch(0.62 0.10 75);      /* ~5:1 */
+    --hi: oklch(0.95 0.08 90);
+    --err: oklch(0.70 0.18 30);
+    --glow: oklch(0.83 0.16 75 / .45);
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+  :root.green{
+    --bg: oklch(0.14 0.02 150); --screen: oklch(0.17 0.03 150);
+    --fg: oklch(0.85 0.19 145); --dim: oklch(0.62 0.11 145); --hi: oklch(0.96 0.08 140);
+    --glow: oklch(0.85 0.19 145 / .45);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:var(--bg);color:var(--fg);font-family:var(--mono);font-size:15px;line-height:1.6;display:grid;place-items:center;padding:clamp(8px,3vw,40px);transition:background .4s}
+  ::selection{background:var(--fg);color:var(--bg)}
+  :focus-visible{outline:2px solid var(--hi);outline-offset:2px}
+
+  .monitor{width:min(1100px,100%);height:min(780px,calc(100svh - 2*clamp(8px,3vw,40px)));border-radius:18px;padding:10px;
+    background:linear-gradient(160deg,oklch(0.26 0.01 70),oklch(0.18 0.01 70));box-shadow:0 0 0 1px oklch(0.35 0.01 70),0 40px 80px -30px #000,inset 0 1px 0 oklch(0.4 0.01 70);display:flex;flex-direction:column}
+  .bar{display:flex;align-items:center;gap:8px;padding:6px 10px 12px;color:oklch(0.65 0.01 70);font-size:12px}
+  .bar i{width:12px;height:12px;border-radius:50%;background:oklch(0.35 0.01 70)}
+  .bar i:nth-child(1){background:oklch(0.65 0.2 25)}.bar i:nth-child(2){background:oklch(0.8 0.15 85)}.bar i:nth-child(3){background:oklch(0.72 0.17 145)}
+  .bar span{margin-left:auto;margin-right:auto;transform:translateX(-24px)}
+
+  .screen{position:relative;flex:1;border-radius:12px;background:radial-gradient(ellipse at center,var(--screen),var(--bg) 120%);overflow:hidden;transition:background .4s}
+  /* scanlines + vinheta + flicker — camada puramente decorativa */
+  .screen::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:3;
+    background:repeating-linear-gradient(0deg,rgb(0 0 0 / .18) 0 1px,transparent 1px 3px)}
+  .screen::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:4;
+    background:radial-gradient(ellipse at center,transparent 60%,rgb(0 0 0 / .55));animation:flicker 4s infinite}
+  @keyframes flicker{0%,100%{opacity:1}48%{opacity:1}50%{opacity:.85}52%{opacity:1}}
+  .sweep{position:absolute;left:0;right:0;height:120px;z-index:2;pointer-events:none;
+    background:linear-gradient(transparent,var(--glow),transparent);opacity:.08;animation:sweep 7s linear infinite}
+  @keyframes sweep{from{top:-120px}to{top:100%}}
+
+  .term{position:absolute;inset:0;overflow-y:auto;padding:clamp(16px,3vw,32px);text-shadow:0 0 6px var(--glow);scrollbar-width:thin;scrollbar-color:var(--dim) transparent}
+  .out > div{white-space:pre-wrap;word-break:break-word}
+  .dim{color:var(--dim)} .hi{color:var(--hi)} .err{color:var(--err)}
+  .ascii{font-weight:800;line-height:1.05;font-size:clamp(5px,1.25vw,13px);color:var(--hi);white-space:pre;margin:4px 0 12px}
+  .out a{color:var(--hi);text-decoration:underline;text-underline-offset:3px}
+  .proj{display:grid;grid-template-columns:3ch 1fr;gap:0 12px;margin:6px 0}
+  .proj b{color:var(--hi);font-weight:600}
+  .bar-meter{display:inline-block;letter-spacing:-1px}
+
+  .prompt{display:flex;gap:10px;align-items:baseline;margin-top:4px}
+  .ps1{color:var(--hi);white-space:nowrap}
+  .ps1 em{font-style:normal;color:var(--dim)}
+  .in-wrap{position:relative;flex:1;min-width:0}
+  #cmd{all:unset;width:100%;color:transparent;caret-color:transparent;font:inherit}
+  .mirror{position:absolute;inset:0;pointer-events:none;white-space:pre;overflow:hidden}
+  .caret{display:inline-block;width:.6em;height:1.15em;background:var(--fg);vertical-align:text-bottom;box-shadow:0 0 8px var(--glow);animation:caret 1s steps(1) infinite}
+  @keyframes caret{50%{opacity:0}}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;padding:10px 4px 2px}
+  .chips button{all:unset;cursor:pointer;font-size:13px;padding:6px 12px;border:1px solid oklch(0.4 0.01 70);border-radius:6px;color:oklch(0.8 0.02 70);transition:border-color .15s,color .15s,transform .15s}
+  .chips button:hover{border-color:var(--fg);color:var(--fg);transform:translateY(-2px)}
+  .chips button:focus-visible{outline:2px solid var(--fg)}
+  .chips span{font-size:12px;color:oklch(0.6 0.01 70);align-self:center;margin-right:4px}
+
+  .glitch{animation:glitch .35s steps(2) 1}
+  @keyframes glitch{0%{transform:translate(2px,-1px);filter:hue-rotate(40deg)}50%{transform:translate(-2px,1px)}100%{transform:none;filter:none}}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+<div class="monitor">
+  <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span>francisco@portfolio: ~</span></div>
+  <div class="screen">
+    <div class="sweep" aria-hidden="true"></div>
+    <div class="term" id="term">
+      <div class="out" id="out" role="log" aria-live="polite"></div>
+      <form class="prompt" id="form" hidden>
+        <label class="ps1" for="cmd">francisco<em>@</em>portfolio<em>:~$</em></label>
+        <div class="in-wrap">
+          <input id="cmd" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="chips-label">
+          <div class="mirror" aria-hidden="true"><span id="typed"></span><span class="caret"></span></div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="chips" id="chips"><span id="chips-label">atalhos:</span></div>
+</div>
+
+<script>
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const out = document.getElementById('out'), term = document.getElementById('term');
+const form = document.getElementById('form'), input = document.getElementById('cmd'), typed = document.getElementById('typed');
+const sleep = ms => new Promise(r => setTimeout(r, reduce ? 0 : ms));
+let skipping = false;
+
+function line(html = '', cls = ''){
+  const d = document.createElement('div');
+  if (cls) d.className = cls;
+  d.innerHTML = html;
+  out.appendChild(d);
+  term.scrollTop = term.scrollHeight;
+  return d;
+}
+async function typeLine(text, cls = '', speed = 12){
+  const d = line('', cls);
+  if (reduce || skipping) { d.textContent = text; return d; }
+  for (let i = 0; i <= text.length; i += 2) { d.textContent = text.slice(0, i); term.scrollTop = term.scrollHeight; await sleep(speed); }
+  d.textContent = text;
+  return d;
+}
+
+const ASCII =
+` ███████╗██████╗  █████╗ ███╗   ██╗ ██████╗██╗███████╗ ██████╗ ██████╗
+ ██╔════╝██╔══██╗██╔══██╗████╗  ██║██╔════╝██║██╔════╝██╔════╝██╔═══██╗
+ █████╗  ██████╔╝███████║██╔██╗ ██║██║     ██║███████╗██║     ██║   ██║
+ ██╔══╝  ██╔══██╗██╔══██║██║╚██╗██║██║     ██║╚════██║██║     ██║   ██║
+ ██║     ██║  ██║██║  ██║██║ ╚████║╚██████╗██║███████║╚██████╗╚██████╔╝
+ ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝╚═╝╚══════╝ ╚═════╝ ╚═════╝ `;
+
+const PROJECTS = [
+  ['Rolê — app de eventos', 'Expo · Reanimated · TS', 'RSVP sem cadastro, convite como peça visual.'],
+  ['Painel de intranet', 'Next.js · Tailwind', 'KPIs com tabular-nums, busca no topo.'],
+  ['Sistema de tokens OKLCH', 'CSS · Figma', 'Contraste checado automaticamente no CI.'],
+  ['Este terminal', 'HTML · CSS · JS puro', 'Sim, você está dentro de um projeto agora.'],
+];
+const meter = n => '█'.repeat(n) + '░'.repeat(10 - n);
+
+const COMMANDS = {
+  ajuda: { desc: 'lista os comandos', run(){
+    line('Comandos disponíveis:', 'hi');
+    Object.entries(COMMANDS).filter(([,c]) => c.desc).forEach(([k,c]) => line(`  <span class="hi">${k.padEnd(10)}</span><span class="dim">${c.desc}</span>`));
+    line('<span class="dim">dica: Tab completa, ↑ ↓ navegam no histórico.</span>');
+  }},
+  sobre: { desc: 'quem sou eu', async run(){
+    await typeLine('Francisco Souza — estudante de Engenharia de Software e estagiário de front-end.');
+    await typeLine('Construo interfaces com React, Next.js, Tailwind e React Native/Expo.');
+    await typeLine('Obcecado por tipografia, microinterações e acessibilidade.', 'dim');
+  }},
+  projetos: { desc: 'projetos selecionados', run(){
+    PROJECTS.forEach((p, i) => line(`<div class="proj"><span class="dim">[${i+1}]</span><span><b>${p[0]}</b>  <span class="dim">${p[1]}</span>\n${p[2]}</span></div>`));
+    line('<span class="dim">digite </span><span class="hi">abrir &lt;n&gt;</span><span class="dim"> para ver detalhes.</span>');
+  }},
+  abrir: { run(arg){
+    const p = PROJECTS[+arg - 1];
+    if (!p) return line(`abrir: projeto "${arg ?? ''}" não encontrado. tente 1–${PROJECTS.length}.`, 'err');
+    line(`┌─ ${p[0]} ${'─'.repeat(Math.max(2, 40 - p[0].length))}┐`, 'hi');
+    line(`│ stack:    ${p[1]}`); line(`│ resumo:   ${p[2]}`);
+    line(`│ links:    <a href="#">demo</a> · <a href="#">código</a>`);
+    line(`└${'─'.repeat(44)}┘`, 'hi');
+  }},
+  stack: { desc: 'tecnologias', run(){
+    [['React', 9], ['Next.js', 8], ['TypeScript', 7], ['Tailwind', 9], ['React Native', 7], ['Figma', 6]]
+      .forEach(([n, v]) => line(`  ${n.padEnd(14)}<span class="bar-meter">${meter(v)}</span> <span class="dim">${v * 10}%</span>`));
+  }},
+  contato: { desc: 'como falar comigo', run(){
+    line('  email     <a href="mailto:contato@exemplo.com">contato@exemplo.com</a>');
+    line('  github    <a href="#">github.com/francisco</a>');
+    line('  linkedin  <a href="#">linkedin.com/in/francisco</a>');
+  }},
+  tema: { desc: 'alterna âmbar / verde', run(){
+    document.documentElement.classList.toggle('green');
+    line(`tema: ${document.documentElement.classList.contains('green') ? 'fósforo verde' : 'fósforo âmbar'}`, 'dim');
+  }},
+  limpar: { desc: 'limpa a tela', run(){ out.innerHTML = ''; }},
+  sudo: { run(arg){
+    if ((arg || '').startsWith('contratar')) { line('[sudo] senha para recrutador: ********', 'dim'); line('✔ Permissão concedida. Ótima escolha. → contato', 'hi'); }
+    else line('Bela tentativa. Este incidente será reportado. 👀', 'err');
+  }},
+};
+const ALIASES = { help:'ajuda', clear:'limpar', cls:'limpar', about:'sobre', projects:'projetos', contact:'contato', theme:'tema', ls:'projetos', whoami:'sobre' };
+
+const history = []; let hIdx = 0;
+async function exec(raw){
+  const value = raw.trim();
+  const echo = line('', '');
+  echo.innerHTML = `<span class="hi">francisco<span class="dim">@</span>portfolio<span class="dim">:~$</span></span> `;
+  echo.appendChild(document.createTextNode(value));
+  if (!value) return;
+  history.push(value); hIdx = history.length;
+  let [name, ...rest] = value.toLowerCase().split(/\s+/);
+  name = ALIASES[name] || name;
+  const c = COMMANDS[name];
+  if (!c) { line(`comando não encontrado: ${name.replace(/</g,'&lt;')}. digite <span class="hi">ajuda</span>.`, 'err'); term.classList.add('glitch'); setTimeout(() => term.classList.remove('glitch'), 400); return; }
+  form.hidden = true;
+  await c.run(rest.join(' ') || undefined);
+  line('&nbsp;');
+  form.hidden = false; input.focus(); term.scrollTop = term.scrollHeight;
+}
+
+form.addEventListener('submit', e => { e.preventDefault(); const v = input.value; input.value = ''; typed.textContent = ''; exec(v); });
+input.addEventListener('input', () => typed.textContent = input.value);
+input.addEventListener('keydown', e => {
+  if (e.key === 'ArrowUp' && history.length) { hIdx = Math.max(0, hIdx - 1); input.value = history[hIdx]; }
+  else if (e.key === 'ArrowDown') { hIdx = Math.min(history.length, hIdx + 1); input.value = history[hIdx] || ''; }
+  else if (e.key === 'Tab') {
+    e.preventDefault();
+    const m = Object.keys(COMMANDS).filter(k => k.startsWith(input.value.trim()));
+    if (m.length === 1) input.value = m[0] + ' ';
+    else if (m.length > 1) line(m.join('   '), 'dim');
+  } else return;
+  typed.textContent = input.value;
+});
+document.querySelector('.screen').addEventListener('click', () => { if (!getSelection().toString()) input.focus(); });
+
+const chips = document.getElementById('chips');
+['ajuda','sobre','projetos','stack','contato','tema','limpar'].forEach(c => {
+  const b = document.createElement('button'); b.type = 'button'; b.textContent = c;
+  b.addEventListener('click', () => { if (!form.hidden) exec(c); });
+  chips.appendChild(b);
+});
+
+/* sequência de boot — qualquer tecla pula */
+addEventListener('keydown', () => skipping = true, {once:true});
+(async function boot(){
+  const steps = ['BIOS v2.6 ............ ok', 'memória 640K .......... ok (deveria bastar)', 'montando /dev/criatividade ... ok', 'carregando react@19 ... ok', 'iniciando portfolio.sh'];
+  for (const s of steps) { line(s, 'dim'); await sleep(skipping ? 0 : 220); }
+  await sleep(skipping ? 0 : 300);
+  line(ASCII, 'ascii');
+  await typeLine('Olá! Eu sou o Francisco — dev front-end. Este portfólio é um terminal.');
+  line('Digite <span class="hi">ajuda</span> ou use os atalhos abaixo. ', 'dim');
+  line('&nbsp;');
+  form.hidden = false; input.focus();
+})();
+</script>
+</body>
+</html>

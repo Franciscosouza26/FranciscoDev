@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V2 · Editorial — Francisco Souza</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,500;12..96,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Tokens — papel + tinta + 1 vermelho de impressão (estilo suíço) */
+  :root{
+    --paper: oklch(0.955 0.008 85);
+    --ink: oklch(0.18 0.01 60);       /* ~15:1 sobre papel */
+    --muted: oklch(0.45 0.01 60);     /* ~7:1 sobre papel */
+    --rule: oklch(0.18 0.01 60 / .18);
+    --red: oklch(0.60 0.22 32);       /* ~4.6:1 sobre papel — só texto grande/ícones */
+    --display: "Bricolage Grotesque", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+    --pad: clamp(16px, 3vw, 40px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);font-family:var(--display);font-size:16px;line-height:1.5;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--red);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--red);outline-offset:3px}
+  @media (pointer:fine){ body, a{cursor:none} }
+
+  /* cursor customizado com blend */
+  .cursor{position:fixed;left:0;top:0;width:14px;height:14px;border-radius:50%;background:#fff;mix-blend-mode:difference;pointer-events:none;z-index:100;translate:-50% -50%;transition:width .25s cubic-bezier(.2,.8,.2,1),height .25s cubic-bezier(.2,.8,.2,1)}
+  .cursor.big{width:72px;height:72px}
+  @media (pointer:coarse){ .cursor{display:none} }
+
+  .mono{font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+  .topbar{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--pad);padding:18px var(--pad);border-bottom:1px solid var(--rule);position:sticky;top:0;background:var(--paper);z-index:10}
+  .topbar a:hover{color:var(--red)}
+  .topbar .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:8px;animation:blink 1.2s steps(2) infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  .hero{padding:clamp(40px,8vw,96px) var(--pad) 0}
+  .giant{font-weight:800;font-size:clamp(64px,15.5vw,260px);line-height:.82;letter-spacing:-.055em;text-transform:uppercase;display:block}
+  .line{display:block;overflow:hidden;padding-bottom:.04em}
+  .ch{display:inline-block;transform:translateY(110%);animation:rise .9s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--i) * 35ms + 150ms)}
+  @keyframes rise{to{transform:none}}
+  .line.r{text-align:right}
+  .line .red{color:var(--red)}
+  .hero-foot{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--pad);padding:32px 0 40px;border-bottom:1px solid var(--ink);align-items:end}
+  .hero-foot p{grid-column:3 / span 2;font-size:clamp(20px,2.2vw,30px);line-height:1.2;font-weight:300;letter-spacing:-.01em;text-indent:3em}
+  .hero-foot p b{font-weight:500}
+
+  .marquee{overflow:hidden;border-bottom:1px solid var(--ink);padding:18px 0;white-space:nowrap}
+  .marquee-track{display:inline-flex;gap:48px;animation:slide 28s linear infinite;font-size:clamp(28px,4vw,56px);font-weight:300;letter-spacing:-.02em}
+  .marquee-track span::after{content:"✳";color:var(--red);margin-left:48px}
+  .marquee:hover .marquee-track{animation-play-state:paused}
+  @keyframes slide{to{transform:translateX(-50%)}}
+
+  section{padding:clamp(64px,10vw,140px) var(--pad)}
+  .sec-head{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--pad);margin-bottom:48px;align-items:baseline}
+  .sec-head h2{grid-column:2 / span 3;font-weight:500;font-size:clamp(36px,6vw,88px);line-height:.95;letter-spacing:-.04em}
+
+  /* índice de projetos */
+  .index{list-style:none;border-top:1px solid var(--ink)}
+  .row{display:grid;grid-template-columns:1fr 2fr 1fr .5fr;gap:var(--pad);align-items:center;padding:clamp(18px,2.5vw,32px) 0;border-bottom:1px solid var(--rule);position:relative;transition:color .2s}
+  .row h3{font-weight:500;font-size:clamp(26px,4vw,56px);letter-spacing:-.035em;line-height:1;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+  .row:hover h3{transform:translateX(16px)}
+  .row:hover{color:var(--red)}
+  .row::before{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+  .row:hover::before{transform:scaleX(1)}
+  .row .yr{text-align:right}
+
+  /* preview que segue o cursor */
+  .preview{position:fixed;left:0;top:0;width:clamp(220px,24vw,340px);aspect-ratio:4/5;pointer-events:none;z-index:50;border-radius:4px;overflow:hidden;
+    opacity:0;scale:.6;transition:opacity .25s,scale .35s cubic-bezier(.2,.8,.2,1);box-shadow:0 30px 60px -20px oklch(0.18 0.01 60 / .45)}
+  .preview.on{opacity:1;scale:1}
+  .preview .art{position:absolute;inset:0;transition:opacity .3s}
+  .preview .cap{position:absolute;left:12px;bottom:12px;right:12px;color:#fff;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;mix-blend-mode:difference}
+  @media (pointer:coarse){ .preview{display:none} }
+
+  .cols{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--pad);border-top:1px solid var(--ink);padding-top:24px}
+  .cols h4{font-weight:500;font-size:22px;margin:12px 0 16px;letter-spacing:-.01em}
+  .cols ul{list-style:none;color:var(--muted)}
+  .cols li{padding:6px 0;border-bottom:1px solid var(--rule)}
+
+  footer{background:var(--ink);color:var(--paper);padding:clamp(64px,10vw,120px) var(--pad) 24px}
+  footer .mono{color:oklch(0.75 0.01 60)}
+  .mail{display:block;font-weight:800;font-size:clamp(40px,10vw,170px);letter-spacing:-.05em;line-height:.9;margin:24px 0 64px;overflow:hidden}
+  .mail .w{display:inline-block;position:relative}
+  .mail .w > span{display:inline-block;transition:transform .5s cubic-bezier(.7,0,.2,1)}
+  .mail .w > span:last-child{position:absolute;left:0;top:100%;color:var(--red)}
+  .mail:hover .w > span{transform:translateY(-100%)}
+  .foot-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;border-top:1px solid oklch(0.95 0 0 / .2);padding-top:20px}
+  .foot-row a:hover{color:var(--red)}
+
+  .js .rv{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}
+  .js .rv.in{opacity:1;transform:none}
+
+  @media (max-width:820px){
+    .topbar{grid-template-columns:1fr 1fr}.topbar > :nth-child(n+3){display:none}
+    .hero-foot,.sec-head{grid-template-columns:1fr}.hero-foot p,.sec-head h2{grid-column:auto}
+    .row{grid-template-columns:auto 1fr;}.row .stk,.row .yr{display:none}
+    .cols{grid-template-columns:1fr 1fr}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .ch{transform:none}.js .rv{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+<div class="cursor" aria-hidden="true"></div>
+<div class="preview" aria-hidden="true"><div class="art"></div><span class="cap"></span></div>
+
+<header class="topbar mono">
+  <a href="#">Francisco Souza©</a>
+  <span>Dev Front-end<br>Eng. de Software</span>
+  <span><span class="dot"></span>Brasil — <time id="clock">--:--</time></span>
+  <span style="text-align:right"><a href="#trabalhos">Trabalhos</a>, <a href="#contato">Contato</a></span>
+</header>
+
+<main>
+  <div class="hero">
+    <h1 class="giant" aria-label="Francisco Souza, front-end">
+      <span class="line split" aria-hidden="true">Francisco</span>
+      <span class="line r split" aria-hidden="true">Souza<span class="red">*</span></span>
+    </h1>
+    <div class="hero-foot">
+      <span class="mono">(*Front-end)</span>
+      <span class="mono">Índice 2024—2026</span>
+      <p class="rv">Desenho e construo <b>interfaces web e mobile</b> com atenção obsessiva ao detalhe — tipografia, movimento e acessibilidade.</p>
+    </div>
+  </div>
+
+  <div class="marquee" aria-hidden="true"><div class="marquee-track">
+    <span>React</span><span>Next.js</span><span>React Native</span><span>TypeScript</span><span>Tailwind</span><span>Motion</span><span>Acessibilidade</span>
+    <span>React</span><span>Next.js</span><span>React Native</span><span>TypeScript</span><span>Tailwind</span><span>Motion</span><span>Acessibilidade</span>
+  </div></div>
+
+  <section id="trabalhos">
+    <div class="sec-head">
+      <span class="mono">(01) Trabalhos</span>
+      <h2 class="rv">Projetos selecionados, do conceito ao deploy.</h2>
+    </div>
+    <ol class="index">
+      <li><a class="row rv" href="#" data-c1="#E8341C" data-c2="#F6C344" data-cap="Expo · Reanimated"><span class="mono">01</span><h3>Rolê — Eventos</h3><span class="mono stk">Mobile</span><span class="mono yr">2026</span></a></li>
+      <li><a class="row rv" href="#" data-c1="#1E3A8A" data-c2="#93C5FD" data-cap="Next.js · Tailwind"><span class="mono">02</span><h3>Painel Intranet</h3><span class="mono stk">Dashboard</span><span class="mono yr">2025</span></a></li>
+      <li><a class="row rv" href="#" data-c1="#14532D" data-c2="#BEF264" data-cap="Tokens · OKLCH"><span class="mono">03</span><h3>Sistema de Tokens</h3><span class="mono stk">Design System</span><span class="mono yr">2025</span></a></li>
+      <li><a class="row rv" href="#" data-c1="#111111" data-c2="#E8341C" data-cap="React · Motion"><span class="mono">04</span><h3>Estúdio Landing</h3><span class="mono stk">Web</span><span class="mono yr">2024</span></a></li>
+      <li><a class="row rv" href="#" data-c1="#6D28D9" data-c2="#F0ABFC" data-cap="TypeScript · API"><span class="mono">05</span><h3>Clima, Agora</h3><span class="mono stk">Web App</span><span class="mono yr">2024</span></a></li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="mono">(02) Capacidades</span>
+      <h2 class="rv">O que eu faço bem.</h2>
+    </div>
+    <div class="cols">
+      <div class="rv"><span class="mono">A</span><h4>Interfaces</h4><ul><li>React / Next.js</li><li>Tailwind CSS</li><li>Componentização</li></ul></div>
+      <div class="rv"><span class="mono">B</span><h4>Mobile</h4><ul><li>React Native</li><li>Expo</li><li>Reanimated</li></ul></div>
+      <div class="rv"><span class="mono">C</span><h4>Design</h4><ul><li>Figma</li><li>Design tokens</li><li>Tipografia</li></ul></div>
+      <div class="rv"><span class="mono">D</span><h4>Qualidade</h4><ul><li>WCAG 2.2 AA</li><li>Performance</li><li>TypeScript</li></ul></div>
+    </div>
+  </section>
+</main>
+
+<footer id="contato">
+  <span class="mono">(03) Contato — tem um projeto em mente?</span>
+  <a class="mail" href="mailto:contato@exemplo.com"><span class="w"><span>Diga olá ↗</span><span aria-hidden="true">Diga olá ↗</span></span></a>
+  <div class="foot-row mono"><span>© 2026</span><span><a href="#">GitHub</a> / <a href="#">LinkedIn</a> / <a href="#">Read.cv</a></span><a href="#">Voltar ao topo ↑</a></div>
+</footer>
+
+<script>
+document.documentElement.classList.add('js');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* divide letras para a animação de entrada */
+let i = 0;
+document.querySelectorAll('.split').forEach(line => {
+  const nodes = [...line.childNodes];
+  line.textContent = '';
+  nodes.forEach(n => {
+    const text = n.textContent, wrap = n.nodeType === 1 ? n.cloneNode(false) : line;
+    for (const c of text) { const s = document.createElement('span'); s.className = 'ch'; s.style.setProperty('--i', i++); s.textContent = c; wrap.appendChild(s); }
+    if (wrap !== line) line.appendChild(wrap);
+  });
+});
+
+/* relógio */
+const fmt = new Intl.DateTimeFormat('pt-BR', {hour:'2-digit', minute:'2-digit', second:'2-digit', timeZone:'America/Sao_Paulo'});
+const tickClock = () => document.getElementById('clock').textContent = fmt.format(new Date());
+tickClock(); setInterval(tickClock, 1000);
+
+/* cursor + preview com interpolação (lerp) */
+const cur = document.querySelector('.cursor'), pv = document.querySelector('.preview'), art = pv.querySelector('.art'), cap = pv.querySelector('.cap');
+let mx = innerWidth/2, my = innerHeight/2, px = mx, py = my, cx = mx, cy = my;
+addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; });
+document.querySelectorAll('a, .row').forEach(el => {
+  el.addEventListener('pointerenter', () => cur.classList.add('big'));
+  el.addEventListener('pointerleave', () => cur.classList.remove('big'));
+});
+document.querySelectorAll('.row').forEach(row => {
+  row.addEventListener('pointerenter', () => {
+    const {c1, c2} = row.dataset;
+    art.style.background = `radial-gradient(circle at 30% 25%, ${c2}, transparent 55%), linear-gradient(160deg, ${c1}, ${c2})`;
+    cap.textContent = row.dataset.cap;
+    pv.classList.add('on');
+  });
+  row.addEventListener('pointerleave', () => pv.classList.remove('on'));
+});
+(function loop(){
+  const k = reduce ? 1 : 0.12;
+  const vx = (mx - px) * k;
+  px += vx; py += (my - py) * k;
+  cx += (mx - cx) * (reduce ? 1 : 0.35); cy += (my - cy) * (reduce ? 1 : 0.35);
+  cur.style.transform = `translate(${cx}px,${cy}px)`;
+  const rot = Math.max(-12, Math.min(12, vx * 0.6));
+  pv.style.transform = `translate(${px + 24}px,${py - 120}px) rotate(${rot}deg)`;
+  requestAnimationFrame(loop);
+})();
+
+/* reveal */
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), {threshold:.15});
+document.querySelectorAll('.rv').forEach((el, n) => { el.style.transitionDelay = (n % 5) * 60 + 'ms'; io.observe(el); });
+</script>
+</body>
+</html>
