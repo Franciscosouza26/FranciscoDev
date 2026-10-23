@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Preview de projeto</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 100%; height: 100%; min-height: 160px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; overflow: hidden; background: oklch(0.19 0.025 152); font-family: 'Geist', system-ui, sans-serif; color: #1C2230;">
+<div style="{{wrapStyle}}">
+
+<sc-if value="{{isRole}}" hint-placeholder-val="{{ true }}">
+<div style="width: 200px; height: 390px; border-radius: 30px; background: #121212; padding: 8px; box-sizing: border-box; box-shadow: 0 24px 48px -16px rgb(0 0 0 / 0.7);">
+<div style="width: 100%; height: 100%; border-radius: 23px; overflow: hidden; background: #FFF6EC; display: flex; flex-direction: column; color: #2A1A12;">
+<div style="background: #C7361A; color: #FFF6EC; padding: 30px 16px 16px; display: flex; flex-direction: column; gap: 6px;">
+<span style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600;">você foi convidado</span>
+<span style="font-size: 30px; font-weight: 700; line-height: 0.95; letter-spacing: -0.03em;">rolê de<br>sexta</span>
+<span style="font-size: 12px;">sex · 22h · [local]</span>
+</div>
+<div style="padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px; flex: 1;">
+<sc-if value="{{s0}}" hint-placeholder-val="{{ true }}">
+<span style="font-size: 12px; color: #6B5246;">12 confirmados · 3 talvez</span>
+<div style="display: flex;">
+<span style="width: 26px; height: 26px; border-radius: 50%; background: #F2B33D; border: 2px solid #FFF6EC;"></span>
+<span style="width: 26px; height: 26px; border-radius: 50%; background: #5B8DEF; border: 2px solid #FFF6EC; margin-left: -8px;"></span>
+<span style="width: 26px; height: 26px; border-radius: 50%; background: #2E9E6A; border: 2px solid #FFF6EC; margin-left: -8px;"></span>
+<span style="width: 26px; height: 26px; border-radius: 50%; background: #2A1A12; color: #FFF6EC; font-size: 10px; display: flex; align-items: center; justify-content: center; border: 2px solid #FFF6EC; margin-left: -8px;">+9</span>
+</div>
+<p style="margin: 0; font-size: 12px; line-height: 1.45; color: #4A372D;">Traz uma bebida e um amigo. Endereço aparece depois de confirmar.</p>
+<span style="margin-top: auto; background: #2A1A12; color: #FFF6EC; border-radius: 999px; padding: 11px; text-align: center; font-size: 13px; font-weight: 600;">Confirmar presença</span>
+</sc-if>
+<sc-if value="{{s1}}" hint-placeholder-val="{{ false }}">
+<span style="font-size: 13px; font-weight: 600;">Como te chamam?</span>
+<span style="border: 1.5px solid #2A1A12; border-radius: 10px; padding: 9px 10px; font-size: 13px; background: #fff;">Ana<span style="display: inline-block; width: 1px; height: 13px; background: #C7361A; vertical-align: -2px; margin-left: 1px;"></span></span>
+<span style="font-size: 11px; color: #6B5246;">Sem cadastro, sem senha. Só o nome.</span>
+<span style="margin-top: auto; background: #C7361A; color: #FFF6EC; border-radius: 999px; padding: 11px; text-align: center; font-size: 13px; font-weight: 600;">Entrar na lista</span>
+</sc-if>
+<sc-if value="{{s2}}" hint-placeholder-val="{{ false }}">
+<span style="width: 44px; height: 44px; border-radius: 50%; background: #2E9E6A; color: #fff; display: flex; align-items: center; justify-content: center;">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>
+</span>
+<span style="font-size: 16px; font-weight: 700; letter-spacing: -0.01em;">Você está na lista, Ana.</span>
+<span style="font-size: 12px; color: #4A372D;">Rua [endereço], 22h. A gente avisa se algo mudar.</span>
+<span style="margin-top: auto; border: 1.5px solid #2A1A12; border-radius: 999px; padding: 10px; text-align: center; font-size: 13px; font-weight: 600;">Adicionar à agenda</span>
+</sc-if>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isIntra}}" hint-placeholder-val="{{ false }}">
+<div style="width: 460px; height: 300px; background: #F5F6F8; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 24px 48px -16px rgb(0 0 0 / 0.7);">
+<div style="background: #fff; border-bottom: 1px solid #E2E5EA; padding: 10px 14px; display: flex; align-items: center; gap: 12px;">
+<span style="font-size: 13px; font-weight: 700; letter-spacing: -0.01em;">Intranet</span>
+<span style="flex: 1; display: flex; align-items: center; gap: 8px; border: 1px solid #C9CED6; border-radius: 6px; padding: 6px 10px; font-size: 12px; color: {{searchColor}};">
+<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+{{searchText}}
+</span>
+</div>
+<div style="padding: 14px; display: flex; flex-direction: column; gap: 12px; flex: 1;">
+<sc-if value="{{s0}}" hint-placeholder-val="{{ true }}">
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;">
+<div style="background: #fff; border: 1px solid #E2E5EA; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 11px; color: #5A6375;">Chamados abertos</span><span style="font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums;">128</span></div>
+<div style="background: #fff; border: 1px solid #E2E5EA; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 11px; color: #5A6375;">SLA no prazo</span><span style="font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums;">96,4%</span></div>
+<div style="background: #fff; border: 1px solid #E2E5EA; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 11px; color: #5A6375;">Ramais</span><span style="font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums;">342</span></div>
+</div>
+<div style="background: #fff; border: 1px solid #E2E5EA; border-radius: 8px; font-size: 12px; font-variant-numeric: tabular-nums;">
+<div style="display: grid; grid-template-columns: 70px 1fr 70px; padding: 8px 10px; border-bottom: 1px solid #EEF0F3; color: #5A6375;"><span>#</span><span>Assunto</span><span>Status</span></div>
+<div style="display: grid; grid-template-columns: 70px 1fr 70px; padding: 8px 10px; border-bottom: 1px solid #EEF0F3;"><span>4821</span><span>VPN não conecta</span><span>aberto</span></div>
+<div style="display: grid; grid-template-columns: 70px 1fr 70px; padding: 8px 10px;"><span>4817</span><span>Novo notebook</span><span>em análise</span></div>
+</div>
+<span style="font-size: 10px; color: #5A6375;">dados fictícios</span>
+</sc-if>
+<sc-if value="{{s1}}" hint-placeholder-val="{{ false }}">
+<span style="font-size: 12px; color: #5A6375;">3 resultados para “férias”</span>
+<div style="background: #fff; border: 1px solid #E2E5EA; border-radius: 8px; display: flex; flex-direction: column;">
+<div style="padding: 10px 12px; border-bottom: 1px solid #EEF0F3; display: flex; justify-content: space-between; background: #EEF3FF;"><span style="font-size: 13px; font-weight: 600;">Política de férias 2026</span><span style="font-size: 11px; color: #3A57C4;">documento</span></div>
+<div style="padding: 10px 12px; border-bottom: 1px solid #EEF0F3; display: flex; justify-content: space-between;"><span style="font-size: 13px;">Solicitar férias (RH)</span><span style="font-size: 11px; color: #5A6375;">formulário</span></div>
+<div style="padding: 10px 12px; display: flex; justify-content: space-between;"><span style="font-size: 13px;">Calendário de recessos</span><span style="font-size: 11px; color: #5A6375;">página</span></div>
+</div>
+</sc-if>
+<sc-if value="{{s2}}" hint-placeholder-val="{{ false }}">
+<span style="font-size: 11px; color: #5A6375;">Documentos › RH</span>
+<span style="font-size: 18px; font-weight: 600; letter-spacing: -0.01em;">Política de férias 2026</span>
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<span style="height: 8px; border-radius: 4px; background: #DDE1E7; width: 100%;"></span>
+<span style="height: 8px; border-radius: 4px; background: #DDE1E7; width: 92%;"></span>
+<span style="height: 8px; border-radius: 4px; background: #DDE1E7; width: 70%;"></span>
+</div>
+<span style="align-self: flex-start; margin-top: auto; background: #1F3FB0; color: #fff; border-radius: 6px; padding: 8px 14px; font-size: 12px; font-weight: 600;">Solicitar férias</span>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isTokens}}" hint-placeholder-val="{{ false }}">
+<div style="width: 460px; height: 300px; border-radius: 10px; overflow: hidden; box-shadow: 0 24px 48px -16px rgb(0 0 0 / 0.7); display: flex; flex-direction: column; padding: 18px; box-sizing: border-box; gap: 14px; background: {{tokBg}}; color: {{tokInk}};">
+<div style="display: flex; justify-content: space-between; align-items: baseline;"><span style="font-size: 15px; font-weight: 600;">green · oklch(L 0.14 150)</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; opacity: 0.8;">{{tokMode}}</span></div>
+<sc-if value="{{s0}}" hint-placeholder-val="{{ true }}">
+<div style="display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 4px;">
+<div style="display: flex; flex-direction: column; gap: 4px;"><span style="height: 96px; border-radius: 4px; background: oklch(0.97 0.03 150); border: 1px solid #0001;"></span><span style="font-size: 10px; font-family: 'JetBrains Mono', monospace;">50</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px;"><span style="height: 96px; border-radius: 4px; background: oklch(0.92 0.06 150);"></span><span style="font-size: 10px; font-family: 'JetBrains Mono', monospace;">100</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px;"><span style="height: 96px; border-radius: 4px; background: oklch(0.85 0.10 150);"></span><span style="font-size: 10px; font-family: 'JetBrains Mono', monospace;">200</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px;"><span style="height: 96px; border-radius: 4px; background: oklch(0.77 0.13 150);"></span><span style="font-size: 10px; font-family: 'JetBrains Mono', monospace;">300</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px;"><span style="height: 96px; border-radius: 4px; background: oklch(0.69 0.15 150);"></span><span style="font-size: 10px; font-family: 'JetBrains Mono', monospace;">400</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px;"><span style="height: 96px; border-radius: 4px; background: oklch(0.61 0.15 150);"></span><span style="font-size: 10px; font-family: 'JetBrains Mono', monospace;">500</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px;"><span style="height: 96px; border-radius: 4px; background: oklch(0.53 0.14 150);"></span><span style="font-size: 10px; font-family: 'JetBrains Mono', monospace;">600</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px;"><span style="height: 96px; border-radius: 4px; background: oklch(0.45 0.12 150);"></span><span style="font-size: 10px; font-family: 'JetBrains Mono', monospace;">700</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px;"><span style="height: 96px; border-radius: 4px; background: oklch(0.36 0.09 150);"></span><span style="font-size: 10px; font-family: 'JetBrains Mono', monospace;">800</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px;"><span style="height: 96px; border-radius: 4px; background: oklch(0.27 0.06 150);"></span><span style="font-size: 10px; font-family: 'JetBrains Mono', monospace;">900</span></div>
+</div>
+<span style="font-size: 12px; opacity: 0.85;">Mesmo matiz e croma: só a luminosidade anda. Degraus iguais aos olhos.</span>
+</sc-if>
+<sc-if value="{{s1}}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; flex: 1;">
+<div style="border-radius: 8px; background: oklch(0.97 0.03 150); color: oklch(0.45 0.12 150); padding: 14px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #0001;"><span style="font-size: 40px; font-weight: 600;">Aa</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: oklch(0.27 0.06 150);">700 sobre 50<br>passa AA · texto normal</span></div>
+<div style="border-radius: 8px; background: oklch(0.97 0.03 150); color: oklch(0.69 0.15 150); padding: 14px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #0001;"><span style="font-size: 40px; font-weight: 600;">Aa</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: oklch(0.27 0.06 150);">400 sobre 50<br>reprova · só decorativo</span></div>
+</div>
+</sc-if>
+<sc-if value="{{s2}}" hint-placeholder-val="{{ false }}">
+<div style="border-radius: 8px; border: 1px solid oklch(0.36 0.04 150); background: oklch(0.24 0.02 150); padding: 16px; display: flex; flex-direction: column; gap: 10px; flex: 1;">
+<span style="font-size: 16px; font-weight: 600; color: oklch(0.95 0.02 150);">Tema escuro gerado da mesma escala</span>
+<span style="font-size: 12px; color: oklch(0.80 0.03 150);">Cinzas mais claros, croma reduzido, sem preto puro.</span>
+<span style="align-self: flex-start; margin-top: auto; background: oklch(0.77 0.13 150); color: oklch(0.2 0.03 150); border-radius: 6px; padding: 8px 14px; font-size: 12px; font-weight: 600;">Botão primário</span>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{isTerm}}" hint-placeholder-val="{{ false }}">
+<div style="width: 460px; height: 300px; border-radius: 10px; overflow: hidden; box-shadow: 0 24px 48px -16px rgb(0 0 0 / 0.7); border: 1px solid oklch(0.38 0.08 150); background: oklch(0.13 0.02 155); color: oklch(0.87 0.21 145); font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.6; padding: 14px 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 2px;">
+<span style="color: oklch(0.66 0.13 147);">terminal dentro do terminal (sim)</span>
+<sc-if value="{{s0}}" hint-placeholder-val="{{ true }}">
+<span style="color: oklch(0.66 0.13 147);">conectando à matrix...</span>
+<span style="color: oklch(0.66 0.13 147);">rastreando sinal ........ ok</span>
+<span style="color: oklch(0.66 0.13 147);">carregando react@19 ..... ok</span>
+<span>acesso concedido.</span>
+</sc-if>
+<sc-if value="{{s1}}" hint-placeholder-val="{{ false }}">
+<span><span style="color: oklch(0.97 0.07 150);">francisco</span>@matrix:~$ projetos</span>
+<span>[01] rolê <span style="color: oklch(0.66 0.13 147);">· app mobile</span></span>
+<span>[02] painel de intranet <span style="color: oklch(0.66 0.13 147);">· dashboard</span></span>
+<span>[03] tokens oklch <span style="color: oklch(0.66 0.13 147);">· design system</span></span>
+<span>[04] este terminal <span style="color: oklch(0.66 0.13 147);">· portfólio</span></span>
+</sc-if>
+<sc-if value="{{s2}}" hint-placeholder-val="{{ false }}">
+<span><span style="color: oklch(0.97 0.07 150);">francisco</span>@matrix:~$ sudo contratar</span>
+<span style="color: oklch(0.66 0.13 147);">[sudo] senha para recrutador: ********</span>
+<span>permissão concedida. abrindo ~/contato ...</span>
+</sc-if>
+<span style="margin-top: auto;"><span style="color: oklch(0.97 0.07 150);">francisco</span>@matrix:~$ <span style="display: inline-block; width: 7px; height: 13px; background: oklch(0.87 0.21 145); vertical-align: -2px;"></span></span>
+</div>
+</sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"kind":{"editor":"enum","options":["role","intranet","tokens","terminal"],"default":"role"},"step":{"editor":"int","min":0,"max":2,"default":0},"size":{"editor":"enum","options":["s","ms","m","l"],"default":"l"},"$preview":{"width":560,"height":420}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const kind = this.props.kind ?? 'role';
+    const step = Math.max(0, Math.min(2, Number(this.props.step ?? 0)));
+    const size = this.props.size ?? 'l';
+    const isRole = kind === 'role';
+    const scales = isRole ? { s: 0.42, ms: 0.62, m: 0.66, l: 0.95 } : { s: 0.36, ms: 0.64, m: 0.8, l: 1 };
+    const scale = scales[size] ?? 1;
+    const dark = kind === 'tokens' && step === 2;
+    return {
+      isRole,
+      isIntra: kind === 'intranet',
+      isTokens: kind === 'tokens',
+      isTerm: kind === 'terminal',
+      s0: step === 0, s1: step === 1, s2: step === 2,
+      wrapStyle: 'transform: scale(' + scale + '); transform-origin: center; transition: transform 200ms ease-out;',
+      searchText: step === 0 ? 'Buscar pessoas, chamados, docs…' : 'férias',
+      searchColor: step === 0 ? '#5A6375' : '#1C2230',
+      tokBg: dark ? 'oklch(0.18 0.015 150)' : '#FAFAF7',
+      tokInk: dark ? 'oklch(0.95 0.02 150)' : '#1C2230',
+      tokMode: dark ? 'tema: escuro' : 'tema: claro'
+    };
+  }
+}
+</script>
+</body>
+</html>

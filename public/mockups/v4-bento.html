@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V4 · Bento Stickers — Francisco Souza</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..700,100;1,9..144,300..700,100&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+  /* Tokens — creme quente, tinta marrom, acento azul-cobalto (complementar ao creme) */
+  :root{
+    --bg: oklch(0.95 0.02 85);
+    --card: oklch(0.985 0.008 85);
+    --ink: oklch(0.22 0.02 60);       /* ~14:1 */
+    --muted: oklch(0.48 0.02 60);     /* ~6.3:1 */
+    --line: oklch(0.22 0.02 60 / .12);
+    --cobalt: oklch(0.50 0.22 265);   /* ~6:1 sobre card */
+    --butter: oklch(0.90 0.13 95);
+    --peach: oklch(0.84 0.10 45);
+    --mint: oklch(0.88 0.09 160);
+    --lilac: oklch(0.85 0.08 300);
+    --r: 24px;
+    --serif: "Fraunces", Georgia, serif;
+    --sans: "DM Sans", system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;overflow-x:hidden;
+    background-image:radial-gradient(var(--line) 1px,transparent 1px);background-size:22px 22px}
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--cobalt);outline-offset:3px}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:clamp(16px,3vw,40px)}
+  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+  .logo{font-family:var(--serif);font-size:22px;font-weight:600;font-style:italic}
+  header nav{display:flex;gap:6px}
+  header nav a{font-size:14px;font-weight:500;padding:8px 14px;border-radius:999px;text-decoration:none;background:var(--card);border:1px solid var(--line);transition:transform .2s cubic-bezier(.3,1.6,.5,1)}
+  header nav a:hover{transform:translateY(-2px) rotate(-2deg)}
+
+  .bento{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:minmax(170px,auto);gap:14px;
+    grid-template-areas:
+      "intro intro intro photo"
+      "intro intro intro status"
+      "clock music stack stack"
+      "p1 p1 p2 p2"
+      "p1 p1 p2 p2"
+      "contact contact contact fun"}
+  .tile{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px;overflow:hidden;
+    transform-style:preserve-3d;transition:transform .5s cubic-bezier(.2,.8,.2,1),box-shadow .3s;will-change:transform}
+  .tile:hover{box-shadow:0 18px 40px -18px oklch(0.22 0.02 60 / .35)}
+  .tile .shine{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;
+    background:radial-gradient(420px circle at var(--px,50%) var(--py,50%),oklch(1 0 0 / .55),transparent 45%);mix-blend-mode:soft-light}
+  .tile:hover .shine{opacity:1}
+  .kicker{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+  .intro{grid-area:intro;display:flex;flex-direction:column;justify-content:space-between;gap:24px;padding:clamp(24px,4vw,48px)}
+  .intro h1{font-family:var(--serif);font-weight:350;font-size:clamp(40px,6.4vw,92px);line-height:.98;letter-spacing:-.025em;font-variation-settings:"SOFT" 100}
+  .intro h1 i{font-weight:300;color:var(--cobalt)}
+  .wave{display:inline-block;transform-origin:70% 70%;animation:wave 2.4s ease-in-out infinite}
+  @keyframes wave{0%,60%,100%{transform:none}10%,30%{transform:rotate(14deg)}20%,40%{transform:rotate(-8deg)}}
+  .intro p{font-size:18px;color:var(--muted);max-width:46ch}
+  .intro .btns{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 22px;border-radius:999px;font-weight:700;text-decoration:none;transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
+  .btn:hover{transform:translateY(-3px) scale(1.03)}
+  .btn:active{transform:scale(.97)}
+  .btn.primary{background:var(--ink);color:var(--card)}
+  .btn.ghost{border:1.5px solid var(--ink)}
+
+  .photo{grid-area:photo;background:var(--butter);display:grid;place-items:center;padding:0}
+  .avatar{width:72%;aspect-ratio:1;border-radius:50% 50% 46% 54% / 55% 48% 52% 45%;background:var(--cobalt);display:grid;place-items:center;
+    font-family:var(--serif);font-size:56px;font-style:italic;color:var(--butter);animation:blob 9s ease-in-out infinite;transform:translateZ(30px)}
+  @keyframes blob{50%{border-radius:42% 58% 60% 40% / 45% 55% 45% 55%}}
+
+  .status{grid-area:status;background:var(--ink);color:var(--card);display:flex;flex-direction:column;justify-content:space-between}
+  .status .kicker{color:oklch(0.8 0.02 85)}
+  .status strong{font-family:var(--serif);font-weight:400;font-size:24px;line-height:1.15}
+  .pulse{display:inline-flex;align-items:center;gap:8px;font-size:14px}
+  .pulse::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 0 var(--mint);animation:ping 1.8s cubic-bezier(0,0,.2,1) infinite}
+  @keyframes ping{80%,100%{box-shadow:0 0 0 10px transparent}}
+
+  .clock{grid-area:clock;background:var(--peach);display:flex;flex-direction:column;justify-content:space-between}
+  .clock time{font-family:var(--serif);font-size:clamp(40px,4.4vw,56px);font-weight:400;font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1}
+  .clock small{color:var(--ink);opacity:.75;font-size:14px}
+
+  .music{grid-area:music;background:var(--lilac);display:flex;flex-direction:column;justify-content:space-between}
+  .eq{display:flex;align-items:end;gap:4px;height:36px}
+  .eq i{width:6px;border-radius:3px;background:var(--ink);animation:eq 1s ease-in-out infinite}
+  .eq i:nth-child(1){animation-delay:-.2s}.eq i:nth-child(2){animation-delay:-.5s}.eq i:nth-child(3){animation-delay:-.1s}.eq i:nth-child(4){animation-delay:-.7s}.eq i:nth-child(5){animation-delay:-.35s}
+  @keyframes eq{0%,100%{height:20%}50%{height:100%}}
+  .music b{display:block;font-size:17px}
+  .music span{font-size:14px;opacity:.75}
+
+  .stack{grid-area:stack;display:flex;flex-direction:column;justify-content:space-between;gap:16px;padding-inline:0}
+  .stack .kicker{padding-inline:24px}
+  .belt{display:flex;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
+  .belt-track{display:flex;gap:10px;padding-right:10px;animation:belt 22s linear infinite;flex-shrink:0}
+  .belt.rev .belt-track{animation-direction:reverse}
+  .belt:hover .belt-track{animation-play-state:paused}
+  @keyframes belt{to{transform:translateX(-100%)}}
+  .pill{white-space:nowrap;padding:10px 16px;border-radius:999px;border:1.5px solid var(--ink);font-weight:500;font-size:15px}
+  .pill.f{background:var(--ink);color:var(--card)}
+
+  .proj{display:flex;flex-direction:column;gap:16px;text-decoration:none}
+  .p1{grid-area:p1}.p2{grid-area:p2}
+  .screen{flex:1;min-height:220px;border-radius:16px;position:relative;overflow:hidden;transform:translateZ(40px)}
+  .p1 .screen{background:linear-gradient(150deg,var(--cobalt),oklch(0.35 0.18 280))}
+  .p2 .screen{background:linear-gradient(150deg,var(--mint),oklch(0.75 0.12 190))}
+  .phone{position:absolute;left:50%;bottom:-30px;translate:-50% 0;width:42%;aspect-ratio:9/17;border-radius:26px;background:var(--card);border:6px solid var(--ink);padding:14px 10px;display:flex;flex-direction:column;gap:8px;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+  .p1:hover .phone{transform:translateY(-14px) rotate(-3deg)}
+  .phone i{display:block;height:10px;border-radius:5px;background:var(--line)}
+  .phone i.big{height:70px;border-radius:12px;background:var(--peach)}
+  .phone i.s{width:60%}
+  .browser{position:absolute;left:8%;right:8%;top:14%;bottom:-20px;border-radius:12px 12px 0 0;background:var(--card);border:1.5px solid var(--ink);padding:28px 16px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-content:start;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+  .p2:hover .browser{transform:translateY(-12px)}
+  .browser::before{content:"● ● ●";position:absolute;top:6px;left:12px;font-size:9px;letter-spacing:2px;color:var(--muted)}
+  .browser i{height:54px;border-radius:8px;background:var(--line)}
+  .browser i:first-child{grid-column:span 3;height:30px;background:var(--butter)}
+  .proj-meta{display:flex;justify-content:space-between;align-items:end;gap:12px}
+  .proj h3{font-family:var(--serif);font-weight:400;font-size:30px;line-height:1.05}
+  .proj p{color:var(--muted);font-size:15px}
+  .go{flex-shrink:0;width:48px;height:48px;border-radius:50%;background:var(--ink);color:var(--card);display:grid;place-items:center;font-size:20px;transition:transform .3s cubic-bezier(.3,1.6,.5,1)}
+  .proj:hover .go{transform:rotate(-45deg) scale(1.08)}
+
+  .contact{grid-area:contact;background:var(--cobalt);color:var(--card);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:clamp(24px,4vw,40px)}
+  .contact h2{font-family:var(--serif);font-weight:300;font-size:clamp(32px,4.4vw,60px);line-height:1;font-style:italic}
+  .contact .btn.primary{background:var(--butter);color:var(--ink)}
+  .fun{grid-area:fun;background:var(--butter);display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;user-select:none}
+  .fun b{font-family:var(--serif);font-size:56px;font-weight:400;line-height:1;font-variant-numeric:tabular-nums}
+  .fun small{font-size:14px}
+  .burst{position:absolute;pointer-events:none;font-size:22px;animation:burst .9s cubic-bezier(.2,.8,.2,1) forwards}
+  @keyframes burst{to{transform:translate(var(--dx),var(--dy)) rotate(var(--rot)) scale(.4);opacity:0}}
+
+  /* adesivos arrastáveis — decorativos */
+  .sticker{position:absolute;z-index:30;touch-action:none;cursor:grab;user-select:none;font-weight:700;font-size:14px;
+    filter:drop-shadow(0 6px 10px oklch(0.22 0.02 60 / .25));transition:scale .2s cubic-bezier(.3,1.6,.5,1)}
+  .sticker:hover{scale:1.08}
+  .sticker.drag{cursor:grabbing;scale:1.15}
+  .s-star{width:110px;height:110px;display:grid;place-items:center;text-align:center;background:var(--peach);line-height:1.1;
+    clip-path:polygon(50% 0,61% 20%,82% 10%,80% 33%,100% 40%,85% 57%,96% 78%,73% 80%,66% 100%,50% 86%,34% 100%,27% 80%,4% 78%,15% 57%,0 40%,20% 33%,18% 10%,39% 20%)}
+  .s-pill{padding:10px 18px;border-radius:999px;background:var(--mint);border:2px solid var(--ink)}
+  .s-circle{width:96px;height:96px;border-radius:50%;background:var(--ink);color:var(--butter);display:grid;place-items:center;text-align:center;font-family:var(--serif);font-style:italic;font-weight:400;font-size:16px;line-height:1.1}
+  .hint{text-align:center;color:var(--muted);font-size:13px;margin-top:20px}
+
+  .js .tile{opacity:0;translate:0 30px}
+  .js .tile.in{opacity:1;translate:0 0;transition:transform .5s cubic-bezier(.2,.8,.2,1),box-shadow .3s,opacity .6s ease-out,translate .7s cubic-bezier(.3,1.4,.5,1)}
+
+  @media (max-width:900px){
+    .bento{grid-template-columns:1fr 1fr;grid-template-areas:"intro intro" "photo status" "clock music" "stack stack" "p1 p1" "p2 p2" "contact contact" "fun fun"}
+    .sticker{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .js .tile{opacity:1;translate:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="logo">francisco.</span>
+    <nav aria-label="Principal"><a href="#projetos">Projetos</a><a href="#contato">Contato</a></nav>
+  </header>
+
+  <main class="bento" id="bento">
+    <section class="tile intro">
+      <span class="kicker">Portfólio · 2026</span>
+      <h1>Oi, eu sou o Francisco <span class="wave" aria-hidden="true">👋</span><br>e faço <i>interfaces</i> com carinho.</h1>
+      <p>Estudante de Engenharia de Software e estagiário de front-end. React, Next.js, Tailwind e React Native — com um pé no design.</p>
+      <div class="btns"><a class="btn primary" href="#projetos">Ver projetos ↓</a><a class="btn ghost" href="#">Currículo</a></div>
+      <span class="shine"></span>
+    </section>
+
+    <div class="tile photo" aria-label="Avatar"><div class="avatar">fs</div><span class="shine"></span></div>
+
+    <div class="tile status">
+      <span class="kicker">Agora</span>
+      <strong>Estagiário front-end, aberto a novos desafios</strong>
+      <span class="pulse">disponível</span>
+      <span class="shine"></span>
+    </div>
+
+    <div class="tile clock">
+      <span class="kicker">Hora local</span>
+      <time id="clock">--:--</time>
+      <small>Brasil · GMT−3</small>
+      <span class="shine"></span>
+    </div>
+
+    <div class="tile music">
+      <span class="kicker">Codando ao som de</span>
+      <div class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <div><b>Lo-fi para deploys</b><span>Playlist · 2h 14min</span></div>
+      <span class="shine"></span>
+    </div>
+
+    <div class="tile stack">
+      <span class="kicker">Stack favorita</span>
+      <div class="belt"><div class="belt-track"><span class="pill f">React</span><span class="pill">Next.js</span><span class="pill">TypeScript</span><span class="pill f">Tailwind</span><span class="pill">Expo</span><span class="pill">Figma</span></div><div class="belt-track" aria-hidden="true"><span class="pill f">React</span><span class="pill">Next.js</span><span class="pill">TypeScript</span><span class="pill f">Tailwind</span><span class="pill">Expo</span><span class="pill">Figma</span></div></div>
+      <div class="belt rev" aria-hidden="true"><div class="belt-track"><span class="pill">React Native</span><span class="pill f">Framer Motion</span><span class="pill">Git</span><span class="pill">Node.js</span><span class="pill f">a11y</span></div><div class="belt-track"><span class="pill">React Native</span><span class="pill f">Framer Motion</span><span class="pill">Git</span><span class="pill">Node.js</span><span class="pill f">a11y</span></div></div>
+      <span class="shine"></span>
+    </div>
+
+    <a class="tile proj p1" id="projetos" href="#">
+      <div class="screen"><div class="phone" aria-hidden="true"><i class="big"></i><i></i><i class="s"></i><i></i><i class="s"></i></div></div>
+      <div class="proj-meta"><div><span class="kicker">App mobile · Expo</span><h3>Rolê — eventos com os amigos</h3><p>RSVP sem cadastro e animações com springs.</p></div><span class="go" aria-hidden="true">→</span></div>
+      <span class="shine"></span>
+    </a>
+
+    <a class="tile proj p2" href="#">
+      <div class="screen"><div class="browser" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>
+      <div class="proj-meta"><div><span class="kicker">Web · Next.js</span><h3>Painel de intranet</h3><p>KPIs legíveis e busca que resolve.</p></div><span class="go" aria-hidden="true">→</span></div>
+      <span class="shine"></span>
+    </a>
+
+    <section class="tile contact" id="contato">
+      <h2>Bora construir<br>algo juntos?</h2>
+      <a class="btn primary" href="mailto:contato@exemplo.com">contato@exemplo.com ↗</a>
+      <span class="shine"></span>
+    </section>
+
+    <button class="tile fun" id="fun" type="button" style="font:inherit;color:inherit;text-align:left">
+      <span class="kicker">Clique aqui</span>
+      <b id="count">0</b>
+      <small>high-fives recebidos</small>
+    </button>
+  </main>
+  <p class="hint">psst — os adesivos são arrastáveis</p>
+</div>
+
+<div class="sticker s-star" style="top:110px;left:calc(50% + 120px);rotate:12deg" aria-hidden="true">feito com<br>café ☕</div>
+<div class="sticker s-pill" style="top:430px;left:calc(50% - 560px);rotate:-8deg" aria-hidden="true">⚛ React lover</div>
+<div class="sticker s-circle" style="top:640px;left:calc(50% + 470px);rotate:-14deg" aria-hidden="true">pixel<br>perfect</div>
+
+<script>
+document.documentElement.classList.add('js');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* entrada em cascata */
+const tiles = [...document.querySelectorAll('.tile')];
+tiles.forEach((t, i) => setTimeout(() => t.classList.add('in'), reduce ? 0 : 80 + i * 70));
+
+/* tilt 3D + brilho */
+if (!reduce && matchMedia('(pointer:fine)').matches) tiles.forEach(t => {
+  t.addEventListener('pointermove', e => {
+    const r = t.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+    const max = r.width > 500 ? 3 : 8;
+    t.style.transform = `perspective(900px) rotateX(${(0.5 - y) * max}deg) rotateY(${(x - 0.5) * max}deg)`;
+    t.style.setProperty('--px', x * 100 + '%'); t.style.setProperty('--py', y * 100 + '%');
+  });
+  t.addEventListener('pointerleave', () => t.style.transform = '');
+});
+
+/* relógio */
+const fmt = new Intl.DateTimeFormat('pt-BR', {hour:'2-digit', minute:'2-digit', timeZone:'America/Sao_Paulo'});
+const tick = () => document.getElementById('clock').textContent = fmt.format(new Date());
+tick(); setInterval(tick, 10000);
+
+/* contador de high-fives com explosão de emojis */
+let n = 0;
+document.getElementById('fun').addEventListener('click', e => {
+  document.getElementById('count').textContent = ++n;
+  if (reduce) return;
+  const host = e.currentTarget, r = host.getBoundingClientRect();
+  const ox = (e.clientX || r.left + r.width/2) - r.left, oy = (e.clientY || r.top + r.height/2) - r.top;
+  for (let k = 0; k < 8; k++) {
+    const s = document.createElement('span'); s.className = 'burst'; s.textContent = ['✋','✨','⭐','🙌'][k % 4];
+    const a = Math.random() * Math.PI * 2, d = 50 + Math.random() * 60;
+    s.style.cssText = `left:${ox}px;top:${oy}px;--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d}px;--rot:${Math.random()*120-60}deg`;
+    host.appendChild(s); setTimeout(() => s.remove(), 900);
+  }
+});
+
+/* adesivos arrastáveis */
+document.querySelectorAll('.sticker').forEach(st => {
+  let sx, sy, ox = 0, oy = 0;
+  st.addEventListener('pointerdown', e => {
+    st.setPointerCapture(e.pointerId); st.classList.add('drag');
+    sx = e.clientX - ox; sy = e.clientY - oy;
+    st.style.zIndex = 40 + Date.now() % 1000;
+  });
+  st.addEventListener('pointermove', e => {
+    if (!st.classList.contains('drag')) return;
+    ox = e.clientX - sx; oy = e.clientY - sy;
+    st.style.translate = `${ox}px ${oy}px`;
+  });
+  const up = () => st.classList.remove('drag');
+  st.addEventListener('pointerup', up); st.addEventListener('pointercancel', up);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V5 · Cinema — Francisco Souza</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500&family=Geist+Mono&display=swap" rel="stylesheet">
+<style>
+  /* Tokens — preto quente de sala de cinema, laranja-brasa como única luz */
+  :root{
+    --bg: oklch(0.16 0.008 50);
+    --bg-2: oklch(0.21 0.01 50);
+    --text: oklch(0.94 0.012 70);
+    --muted: oklch(0.70 0.015 60);   /* ~6.8:1 */
+    --line: oklch(0.32 0.012 50);
+    --ember: oklch(0.72 0.19 45);    /* ~7:1 sobre --bg */
+    --ember-2: oklch(0.80 0.15 75);
+    --serif: "Instrument Serif", Georgia, serif;
+    --sans: "Geist", system-ui, sans-serif;
+    --mono: "Geist Mono", ui-monospace, monospace;
+    --pad: clamp(16px, 4vw, 56px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.55;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--ember);color:var(--bg)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px}
+
+  /* granulado de filme */
+  .grain{position:fixed;inset:-50%;z-index:90;pointer-events:none;opacity:.07;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation:grain .8s steps(4) infinite}
+  @keyframes grain{25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-4%)}75%{transform:translate(-1%,3%)}}
+  .progress{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--ember),var(--ember-2));transform-origin:left;transform:scaleX(0);z-index:80}
+
+  header{position:fixed;top:0;left:0;right:0;z-index:70;display:flex;justify-content:space-between;align-items:center;padding:20px var(--pad);mix-blend-mode:difference;color:#fff}
+  header .name{font-family:var(--serif);font-size:24px;font-style:italic}
+  header nav{display:flex;gap:24px;font-size:14px}
+  header nav a{position:relative}
+  header nav a::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+  header nav a:hover::after{transform:scaleX(1);transform-origin:left}
+
+  /* HERO */
+  .hero{position:relative;height:100svh;min-height:600px;display:flex;flex-direction:column;justify-content:flex-end;padding:0 var(--pad) clamp(32px,6vw,72px);overflow:hidden}
+  .orb{position:absolute;width:56vmax;height:56vmax;left:0;top:0;border-radius:50%;pointer-events:none;filter:blur(70px);opacity:.55;
+    background:radial-gradient(circle at 40% 40%,var(--ember-2),var(--ember) 35%,oklch(0.45 0.18 20) 60%,transparent 70%);will-change:transform}
+  .hero h1{position:relative;font-family:var(--serif);font-weight:400;font-size:clamp(56px,11vw,190px);line-height:.88;letter-spacing:-.03em}
+  .hero h1 .l{display:block;overflow:hidden}
+  .hero h1 .l > span{display:inline-block;transform:translateY(105%);animation:up 1.1s cubic-bezier(.2,.8,.2,1) forwards}
+  .hero h1 .l:nth-child(2) > span{animation-delay:.12s}.hero h1 .l:nth-child(3) > span{animation-delay:.24s}
+  .hero h1 em{color:var(--ember)}
+  @keyframes up{to{transform:none}}
+  .hero-row{position:relative;display:flex;justify-content:space-between;align-items:end;gap:24px;margin-top:32px;flex-wrap:wrap;opacity:0;animation:fade 1s .7s ease-out forwards}
+  @keyframes fade{to{opacity:1}}
+  .hero-row p{max-width:40ch;color:var(--muted)}
+  .scroll-cue{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:12px}
+  .scroll-cue i{width:1px;height:48px;background:var(--line);position:relative;overflow:hidden}
+  .scroll-cue i::after{content:"";position:absolute;left:0;top:-50%;width:1px;height:50%;background:var(--ember);animation:drop 1.6s ease-in-out infinite}
+  @keyframes drop{to{top:100%}}
+
+  /* MANIFESTO — palavras acendem com o scroll */
+  .manifesto{min-height:220vh;position:relative}
+  .manifesto .sticky{position:sticky;top:0;height:100svh;display:flex;align-items:center;padding:0 var(--pad)}
+  .manifesto p{font-family:var(--serif);font-size:clamp(32px,5.2vw,80px);line-height:1.08;letter-spacing:-.015em;max-width:20ch}
+  .w{opacity:.14;transition:opacity .35s ease-out,color .35s}
+  .w.lit{opacity:1}
+  .w.em.lit{color:var(--ember);font-style:italic}
+  .label{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ember);display:block;margin-bottom:24px}
+
+  /* GALERIA HORIZONTAL fixada */
+  .works{position:relative}
+  .works .sticky{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;flex-direction:column;justify-content:center;gap:32px}
+  .works-head{display:flex;justify-content:space-between;align-items:end;padding:0 var(--pad)}
+  .works-head h2{font-family:var(--serif);font-weight:400;font-size:clamp(40px,6vw,96px);line-height:.9}
+  .counter{font-family:var(--mono);font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .track{display:flex;gap:clamp(16px,2.5vw,32px);padding:0 var(--pad);will-change:transform}
+  .slide{flex:0 0 clamp(280px,42vw,620px);display:flex;flex-direction:column;gap:16px}
+  .frame{position:relative;aspect-ratio:16/10;border-radius:6px;overflow:hidden;background:var(--bg-2);border:1px solid var(--line)}
+  .frame .img{position:absolute;inset:-8%;transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+  .slide:hover .img{transform:scale(1.06)}
+  .frame .tag{position:absolute;top:14px;left:14px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;border-radius:999px;background:oklch(0.16 0.008 50 / .7);backdrop-filter:blur(8px)}
+  .frame .play{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transition:opacity .3s}
+  .frame .play span{width:84px;height:84px;border-radius:50%;background:var(--text);color:var(--bg);display:grid;place-items:center;font-size:13px;font-weight:500;scale:.6;transition:scale .4s cubic-bezier(.3,1.5,.5,1)}
+  .slide:hover .play{opacity:1}.slide:hover .play span{scale:1}
+  .slide-meta{display:flex;justify-content:space-between;gap:16px;align-items:baseline}
+  .slide h3{font-family:var(--serif);font-weight:400;font-size:clamp(26px,2.6vw,38px);line-height:1}
+  .slide p{color:var(--muted);font-size:14px}
+  .slide .yr{font-family:var(--mono);font-size:13px;color:var(--muted)}
+
+  /* ANEL 3D da stack */
+  .ring-sec{height:120svh;display:grid;place-items:center;position:relative;overflow:hidden;perspective:1100px}
+  .ring-title{position:absolute;text-align:center;z-index:2;pointer-events:none}
+  .ring-title h2{font-family:var(--serif);font-weight:400;font-size:clamp(44px,7vw,110px);line-height:.9}
+  .ring-title h2 em{color:var(--ember)}
+  .ring{position:relative;width:1px;height:1px;transform-style:preserve-3d;will-change:transform}
+  .ring span{position:absolute;left:0;top:0;translate:-50% -50%;white-space:nowrap;font-family:var(--mono);font-size:clamp(14px,1.6vw,20px);padding:10px 18px;border:1px solid var(--line);border-radius:999px;background:var(--bg-2);backface-visibility:hidden}
+
+  /* CONTATO */
+  .contact{padding:clamp(80px,14vw,200px) var(--pad) 32px;border-top:1px solid var(--line)}
+  .big-link{display:block;font-family:var(--serif);font-size:clamp(56px,13vw,220px);line-height:.85;letter-spacing:-.03em}
+  .big-link .c{display:inline-block;transition:transform .5s cubic-bezier(.3,1.5,.5,1),color .3s;transition-delay:calc(var(--i) * 18ms)}
+  .big-link:hover .c{transform:translateY(-.08em);color:var(--ember)}
+  .big-link:hover .c:nth-child(odd){transform:translateY(.05em) rotate(-3deg)}
+  .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-top:clamp(56px,8vw,120px);color:var(--muted);font-size:14px}
+  .foot a:hover{color:var(--ember)}
+
+  @media (max-width:700px){ header nav{display:none} }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .hero h1 .l > span{transform:none}.hero-row{opacity:1}
+    .w{opacity:1}.manifesto{min-height:auto}.manifesto .sticky{position:static;height:auto;padding-block:120px}
+    .works{height:auto!important}.works .sticky{position:static;height:auto;padding-block:80px}.track{overflow-x:auto;transform:none!important}
+    .orb,.grain{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"></div>
+<header>
+  <a class="name" href="#">Francisco Souza</a>
+  <nav aria-label="Principal"><a href="#trabalhos">Trabalhos</a><a href="#stack">Stack</a><a href="#contato">Contato</a></nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="orb" aria-hidden="true"></div>
+    <h1>
+      <span class="l"><span>Interfaces</span></span>
+      <span class="l"><span>que se <em>movem</em></span></span>
+      <span class="l"><span>com intenção.</span></span>
+    </h1>
+    <div class="hero-row">
+      <p>Francisco Souza — dev front-end e estudante de Engenharia de Software. Faço da web e do mobile lugares com ritmo, contraste e cuidado.</p>
+      <span class="scroll-cue"><i></i>Role para assistir</span>
+    </div>
+  </section>
+
+  <section class="manifesto" id="manifesto">
+    <div class="sticky">
+      <div>
+        <span class="label">Manifesto</span>
+        <p id="words">Acredito que toda animação precisa *responder* uma pergunta. Que acessibilidade não é extra, é a *base*. E que um bom produto é feito de *mil* pequenos detalhes que ninguém percebe — até faltarem.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="works" id="trabalhos">
+    <div class="sticky">
+      <div class="works-head"><h2>Trabalhos<br>selecionados</h2><span class="counter"><span id="cur">01</span> / 04</span></div>
+      <div class="track" id="track">
+        <a class="slide" href="#"><div class="frame"><div class="img" style="background:radial-gradient(circle at 70% 30%,var(--ember-2),transparent 45%),linear-gradient(140deg,oklch(0.45 0.18 30),oklch(0.22 0.05 30))"></div><span class="tag">App mobile</span><span class="play"><span>Ver case</span></span></div>
+          <div class="slide-meta"><div><h3>Rolê — eventos</h3><p>Expo · Reanimated · TypeScript</p></div><span class="yr">2026</span></div></a>
+        <a class="slide" href="#"><div class="frame"><div class="img" style="background:repeating-linear-gradient(90deg,oklch(0.3 0.03 240) 0 2px,transparent 2px 40px),linear-gradient(160deg,oklch(0.4 0.1 240),oklch(0.2 0.03 240))"></div><span class="tag">Dashboard</span><span class="play"><span>Ver case</span></span></div>
+          <div class="slide-meta"><div><h3>Painel de intranet</h3><p>Next.js · Tailwind</p></div><span class="yr">2025</span></div></a>
+        <a class="slide" href="#"><div class="frame"><div class="img" style="background:conic-gradient(from 200deg at 40% 60%,oklch(0.75 0.14 150),oklch(0.35 0.08 180),oklch(0.75 0.14 150))"></div><span class="tag">Design system</span><span class="play"><span>Ver case</span></span></div>
+          <div class="slide-meta"><div><h3>Tokens em OKLCH</h3><p>CSS · Figma</p></div><span class="yr">2025</span></div></a>
+        <a class="slide" href="#"><div class="frame"><div class="img" style="background:radial-gradient(circle at 30% 70%,oklch(0.7 0.15 320),transparent 50%),linear-gradient(200deg,oklch(0.3 0.1 300),oklch(0.18 0.02 300))"></div><span class="tag">Web</span><span class="play"><span>Ver case</span></span></div>
+          <div class="slide-meta"><div><h3>Clima, Agora</h3><p>React · API REST</p></div><span class="yr">2024</span></div></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="ring-sec" id="stack" aria-labelledby="stack-t">
+    <div class="ring-title"><span class="label">Stack</span><h2 id="stack-t">Minha <em>órbita</em><br>de ferramentas</h2></div>
+    <div class="ring" id="ring">
+      <span>React</span><span>Next.js</span><span>TypeScript</span><span>Tailwind</span><span>React Native</span><span>Expo</span>
+      <span>Framer Motion</span><span>Figma</span><span>Node.js</span><span>Git</span><span>GSAP</span><span>a11y</span>
+    </div>
+  </section>
+</main>
+
+<footer class="contact" id="contato">
+  <span class="label">Contato</span>
+  <a class="big-link split" href="mailto:contato@exemplo.com" aria-label="Vamos conversar? Enviar e-mail">Vamos conversar?</a>
+  <div class="foot"><span>© 2026 Francisco Souza</span><span><a href="#">GitHub</a> · <a href="#">LinkedIn</a></span><span>Feito com Next.js</span></div>
+</footer>
+
+<script>
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+/* manifesto: palavras em spans (*palavra* = destaque) */
+const wordsEl = document.getElementById('words');
+wordsEl.innerHTML = wordsEl.textContent.split(/\s+/).map(w => {
+  const em = /^\*.*\*[.,—]?$/.test(w);
+  return `<span class="w${em ? ' em' : ''}">${w.replace(/\*/g, '')}</span>`;
+}).join(' ');
+const words = [...wordsEl.querySelectorAll('.w')];
+
+/* contato: letras em spans */
+document.querySelectorAll('.split').forEach(el => {
+  el.innerHTML = [...el.textContent].map((c, i) => c === ' ' ? ' ' : `<span class="c" aria-hidden="true" style="--i:${i}">${c}</span>`).join('');
+});
+
+/* anel 3D */
+const ring = document.getElementById('ring'), items = [...ring.children];
+function layoutRing(){
+  const R = Math.min(innerWidth * 0.42, 520);
+  items.forEach((s, i) => s.style.transform = `rotateY(${i * 360 / items.length}deg) translateZ(${R}px)`);
+}
+layoutRing();
+
+const works = document.getElementById('trabalhos'), track = document.getElementById('track');
+const manifesto = document.getElementById('manifesto'), cur = document.getElementById('cur');
+const bar = document.querySelector('.progress');
+function sizeWorks(){
+  if (reduce) return;
+  const extra = track.scrollWidth - innerWidth;
+  works.style.height = innerHeight + Math.max(0, extra) + 'px';
+}
+sizeWorks();
+addEventListener('resize', () => { sizeWorks(); layoutRing(); });
+
+const sectionProgress = el => { const r = el.getBoundingClientRect(); return clamp(-r.top / (r.height - innerHeight), 0, 1); };
+
+let t0 = performance.now();
+function frame(now){
+  const sy = scrollY, max = document.documentElement.scrollHeight - innerHeight;
+  bar.style.transform = `scaleX(${max ? sy / max : 0})`;
+
+  if (!reduce) {
+    const mp = sectionProgress(manifesto);
+    const lit = Math.floor(mp * 1.15 * words.length);
+    words.forEach((w, i) => w.classList.toggle('lit', i < lit));
+
+    const wp = sectionProgress(works);
+    track.style.transform = `translateX(${-wp * Math.max(0, track.scrollWidth - innerWidth)}px)`;
+    cur.textContent = String(Math.min(4, Math.floor(wp * 3.999) + 1)).padStart(2, '0');
+
+    const t = (now - t0) / 1000;
+    ring.style.transform = `rotateX(-14deg) rotateY(${t * 8 + sy * 0.12}deg)`;
+  } else {
+    ring.style.transform = 'rotateX(-14deg) rotateY(20deg)';
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* orbe de luz segue o mouse com atraso */
+if (!reduce) {
+  const orb = document.querySelector('.orb');
+  let tx = innerWidth * .6, ty = innerHeight * .2, x = tx, y = ty;
+  addEventListener('pointermove', e => { tx = e.clientX; ty = e.clientY; });
+  (function follow(){
+    x += (tx - x) * 0.05; y += (ty - y) * 0.05;
+    const s = orb.offsetWidth / 2;
+    orb.style.transform = `translate(${x - s}px,${y - s}px)`;
+    requestAnimationFrame(follow);
+  })();
+}
+</script>
+</body>
+</html>

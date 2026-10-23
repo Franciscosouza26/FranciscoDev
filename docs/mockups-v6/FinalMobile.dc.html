@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>v6 · final — projetos (mobile)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+button:focus-visible,a:focus-visible{outline:2px solid oklch(0.97 0.07 150);outline-offset:2px}
+a{color:oklch(0.97 0.07 150);text-decoration:none}
+.crt{position:relative}
+.crt::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:3;background:repeating-linear-gradient(0deg,rgb(0 0 0/.2) 0 1px,transparent 1px 3px)}
+.crt::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:4;background:radial-gradient(ellipse at center,transparent 60%,rgb(0 0 0/.55))}
+.glow{text-shadow:0 0 6px oklch(0.87 0.21 145/.45)}
+.caret{display:inline-block;width:.6em;height:1.1em;background:oklch(0.87 0.21 145);vertical-align:-.2em;animation:caret 1s steps(1) infinite}
+@keyframes caret{50%{opacity:0}}
+.scroll{scrollbar-width:none}
+@media (prefers-reduced-motion:reduce){.caret{animation:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 8px; background: oklch(0.12 0.02 155); font-family: 'JetBrains Mono', ui-monospace, monospace; color: oklch(0.87 0.21 145); font-size: 13px;">
+<div style="height: 100%; box-sizing: border-box; display: flex; flex-direction: column; border: 1px solid oklch(0.38 0.08 150); border-radius: 16px; padding: 8px; box-shadow: 0 0 60px -20px oklch(0.87 0.21 145 / 0.35);">
+<div style="display: flex; align-items: center; gap: 6px; padding: 2px 6px 8px; font-size: 11px; color: oklch(0.66 0.13 147);">
+<span style="width: 10px; height: 10px; border-radius: 50%; background: oklch(0.38 0.08 150);"></span>
+<span style="width: 10px; height: 10px; border-radius: 50%; background: oklch(0.38 0.08 150);"></span>
+<span style="width: 10px; height: 10px; border-radius: 50%; background: oklch(0.87 0.21 145);"></span>
+<span style="margin-left: auto; margin-right: auto; transform: translateX(-16px);">~/projetos</span>
+</div>
+<div class="crt" style="flex: 1; min-height: 0; border-radius: 12px; overflow: hidden; background: radial-gradient(ellipse at center, oklch(0.155 0.03 152), oklch(0.12 0.02 155) 130%); display: flex; flex-direction: column;">
+
+<nav aria-label="Seções" style="position: relative; z-index: 5; display: flex; gap: 2px; padding: 6px 8px; border-bottom: 1px solid oklch(0.38 0.08 150); overflow-x: auto;" class="scroll">
+<a href="#" style="padding: 8px 8px; color: oklch(0.87 0.21 145);">sobre</a>
+<a href="#" aria-current="page" style="padding: 8px 8px; background: oklch(0.87 0.21 145); color: oklch(0.12 0.02 155); border-radius: 2px;">projetos</a>
+<a href="#" style="padding: 8px 8px; color: oklch(0.87 0.21 145);">stack</a>
+<a href="#" style="padding: 8px 8px; color: oklch(0.87 0.21 145);">contato</a>
+<a href="#" aria-label="ajuda" style="margin-left: auto; padding: 8px 8px; color: oklch(0.66 0.13 147);">?</a>
+</nav>
+
+<div class="glow scroll" style="position: relative; z-index: 1; flex: 1; min-height: 0; overflow-y: auto; padding: 16px 14px; display: flex; flex-direction: column; gap: 12px;">
+<p style="margin: 0; color: oklch(0.66 0.13 147);"><span style="color: oklch(0.97 0.07 150);">francisco</span>@matrix:~$ projetos</p>
+<h2 style="margin: 0; font-size: 15px; font-weight: 700; color: oklch(0.97 0.07 150);">~/projetos (4)</h2>
+
+<div style="display: flex; flex-direction: column; border: 1px solid oklch(0.38 0.08 150);">
+<sc-for list="{{rows}}" as="item" hint-placeholder-count="4">
+<button type="button" onClick="{{item.pick}}" aria-pressed="{{item.pressed}}" style="{{item.rowStyle}}">
+<span style="display: flex; justify-content: space-between; gap: 8px;"><span>{{item.mark}} {{item.name}}</span><span>{{item.status}}</span></span>
+<span style="display: flex; justify-content: space-between; gap: 8px; font-size: 11px; opacity: 0.75;"><span>{{item.pid}} · {{item.kind}}</span><span style="white-space: pre; font-variant-numeric: tabular-nums;">{{item.bar}} {{item.pct}}%</span></span>
+</button>
+</sc-for>
+</div>
+
+<section aria-label="Demonstração" style="position: relative; z-index: 5; border: 1px solid oklch(0.66 0.13 147); display: flex; flex-direction: column; background: oklch(0.12 0.02 155);">
+<div style="display: flex; justify-content: space-between; gap: 8px; padding: 6px 10px; border-bottom: 1px solid oklch(0.38 0.08 150); font-size: 11px; color: oklch(0.66 0.13 147);">
+<span>preview://{{cur.slug}} @{{commit.hash}}</span><span>● online</span>
+</div>
+<div style="height: 280px; display: flex;">
+<dc-import name="Preview" kind="{{cur.key}}" step="{{step}}" size="ms" hint-size="100%,280px" style="flex: 1;"></dc-import>
+</div>
+<div style="display: flex; align-items: center; gap: 4px; padding: 4px; border-top: 1px solid oklch(0.38 0.08 150);">
+<button type="button" onClick="{{prev}}" aria-label="passo anterior" style="min-width: 44px; min-height: 44px; text-align: center; color: oklch(0.97 0.07 150);">[‹]</button>
+<span style="flex: 1; min-width: 0; text-align: center; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><span style="color: oklch(0.66 0.13 147);">{{stepNum}}/3 ·</span> {{curFlag}}</span>
+<button type="button" onClick="{{next}}" aria-label="próximo passo" style="min-width: 44px; min-height: 44px; text-align: center; color: oklch(0.97 0.07 150);">[›]</button>
+</div>
+</section>
+
+<section aria-label="Detalhes do projeto" style="border: 1px solid oklch(0.38 0.08 150); display: flex; flex-direction: column;">
+<div style="display: flex; border-bottom: 1px solid oklch(0.38 0.08 150);">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+<button type="button" onClick="{{t.pick}}" aria-pressed="{{t.pressed}}" style="{{t.style}}">{{t.label}}</button>
+</sc-for>
+</div>
+
+<sc-if value="{{isMan}}" hint-placeholder-val="{{ true }}">
+<div style="padding: 12px; display: flex; flex-direction: column; gap: 10px; line-height: 1.5;">
+<div><div style="color: oklch(0.97 0.07 150); font-weight: 700;">NOME</div><div style="margin-left: 16px;">{{cur.slug}} — {{cur.name}}</div></div>
+<div><div style="color: oklch(0.97 0.07 150); font-weight: 700;">DESCRIÇÃO</div><div style="margin-left: 16px;">{{cur.desc}}</div></div>
+<div style="display: flex; flex-direction: column; gap: 2px;">
+<div style="color: oklch(0.97 0.07 150); font-weight: 700;">OPÇÕES</div>
+<sc-for list="{{opts}}" as="o" hint-placeholder-count="3">
+<button type="button" onClick="{{o.run}}" aria-pressed="{{o.pressed}}" style="{{o.style}}">
+<span style="font-weight: 700;">{{o.flag}}</span>
+<span style="font-size: 12px; opacity: 0.8;">{{o.help}}</span>
+</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isLog}}" hint-placeholder-val="{{ false }}">
+<div style="padding: 12px; display: flex; flex-direction: column; gap: 10px; line-height: 1.5;">
+<div style="display: flex; flex-direction: column;">
+<sc-for list="{{commits}}" as="c" hint-placeholder-count="3">
+<button type="button" onClick="{{c.pick}}" aria-pressed="{{c.pressed}}" style="{{c.style}}">
+<span><span style="opacity: 0.75;">* {{c.hash}}</span> <sc-if value="{{c.hasTag}}" hint-placeholder-val="{{ false }}"><span style="border: 1px solid currentColor; padding: 0 4px; font-size: 11px;">{{c.tag}}</span></sc-if></span>
+<span style="font-size: 12px;">{{c.msg}}</span>
+</button>
+</sc-for>
+</div>
+<span style="white-space: pre; font-size: 12px;"> {{commit.files}} arquivos | +{{commit.add}} <span style="color: oklch(0.74 0.16 30);">−{{commit.del}}</span> · {{commit.date}}</span>
+</div>
+</sc-if>
+
+<sc-if value="{{isReadme}}" hint-placeholder-val="{{ false }}">
+<div style="padding: 12px; display: flex; flex-direction: column; gap: 8px; line-height: 1.6;">
+<span style="font-size: 17px; font-weight: 700; color: oklch(0.97 0.07 150);"># {{cur.name}}</span>
+<div style="display: flex; gap: 6px; flex-wrap: wrap;">
+<sc-for list="{{cur.tags}}" as="tg" hint-placeholder-count="3">
+<span style="border: 1px solid oklch(0.38 0.08 150); padding: 0 6px; font-size: 11px; color: oklch(0.66 0.13 147);">{{tg}}</span>
+</sc-for>
+</div>
+<p style="margin: 0;">{{cur.desc}}</p>
+<span style="font-weight: 700; color: oklch(0.97 0.07 150);">## Funcionalidades</span>
+<sc-for list="{{cur.help}}" as="h" hint-placeholder-count="3">
+<span>- {{h}}</span>
+</sc-for>
+<span style="font-weight: 700; color: oklch(0.97 0.07 150);">## Decisões</span>
+<p style="margin: 0;">{{cur.decision}}</p>
+<span style="font-weight: 700; color: oklch(0.97 0.07 150);">## Rodando localmente</span>
+<pre style="margin: 0; padding: 8px 10px; font: inherit; font-size: 12px; background: oklch(0.38 0.08 150 / 0.35); border: 1px solid oklch(0.38 0.08 150); white-space: pre; overflow-x: auto;">{{cur.run}}</pre>
+<a href="#" style="padding: 8px 0;">[repositório ↗]</a>
+</div>
+</sc-if>
+</section>
+</div>
+
+<div class="glow" style="position: relative; z-index: 5; display: flex; align-items: baseline; gap: 6px; padding: 10px 14px; border-top: 1px solid oklch(0.38 0.08 150);">
+<span style="color: oklch(0.97 0.07 150);">francisco<span style="color: oklch(0.66 0.13 147);">:~$</span></span>
+<span class="caret"></span>
+<span style="color: oklch(0.66 0.13 147);">digite um comando</span>
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  projects() {
+    return [
+      { key: 'role', slug: 'role', pid: '1042', name: 'rolê', kind: 'app mobile', status: '● rodando', pct: 80, tags: ['expo', 'reanimated', 'typescript'],
+        desc: 'App de eventos com confirmação sem cadastro e convite como peça visual.',
+        flags: ['--abrir-convite', '--confirmar --nome "Ana"', '--lista'],
+        help: ['abre o convite como peça visual', 'confirma presença sem cadastro', 'mostra quem já confirmou'],
+        decision: 'Confirmar só com o nome: cada campo a mais é gente desistindo do convite.',
+        run: 'npm install\nnpx expo start',
+        commits: [['f2a90c3', 'v0.1', 'feat: convite como peça visual', '20 set', 11, 352, 16], ['1ce96b0', 'v0.2', 'feat: confirmar presença sem cadastro', '05 out', 9, 214, 38], ['b7a2f31', 'v0.3', 'feat: lista de confirmados', '18 out', 7, 188, 42]] },
+      { key: 'intranet', slug: 'intranet', pid: '1187', name: 'painel de intranet', kind: 'dashboard', status: '● rodando', pct: 60, tags: ['next.js', 'tailwind'],
+        desc: 'KPIs legíveis com tabular-nums, busca forte no topo e densidade controlada.',
+        flags: ['--dashboard', '--buscar "férias"', '--abrir doc/ferias-2026'],
+        help: ['KPIs com números tabulares', 'busca global no topo', 'abre o resultado em detalhe'],
+        decision: 'Números com tabular-nums para comparar colunas sem os dígitos dançarem.',
+        run: 'npm install\nnpm run dev',
+        commits: [['7e5b1d6', '', 'feat: KPIs com tabular-nums', '15 set', 7, 205, 0], ['8f21e4c', '', 'feat: busca global no topo', '01 out', 6, 166, 51], ['5d0e9aa', '', 'feat: detalhe de documento', '15 out', 5, 140, 30]] },
+      { key: 'tokens', slug: 'tokens', pid: '0931', name: 'tokens oklch', kind: 'design system', status: '✓ concluído', pct: 100, tags: ['css', 'figma'],
+        desc: 'Escalas de cor perceptuais com contraste checado automaticamente.',
+        flags: ['--escala green', '--contraste 700/50', '--tema escuro'],
+        help: ['gera 50–900 variando só a luminosidade', 'checa WCAG entre dois degraus', 'deriva o tema escuro'],
+        decision: 'OKLCH em vez de HSL: degraus iguais aos olhos e contraste previsível.',
+        run: 'npm install\nnpm run tokens:build',
+        commits: [['4a8c2e7', '', 'feat: escala oklch 50–900', '10 set', 3, 96, 0], ['c6d3a18', '', 'ci: checagem de contraste WCAG', '28 set', 2, 58, 4], ['a04c7d2', 'v1.0', 'feat: tema escuro derivado da escala', '09 out', 3, 74, 12]] },
+      { key: 'terminal', slug: 'terminal', pid: '0001', name: 'este terminal', kind: 'portfólio', status: '● rodando', pct: 90, tags: ['next.js', 'canvas', 'a11y'],
+        desc: 'Sim, você está dentro de um projeto agora. Next.js, canvas e muito fósforo verde.',
+        flags: ['--boot', 'projetos', 'sudo contratar'],
+        help: ['sequência de boot do CRT', 'lista os projetos', 'easter egg para recrutadores'],
+        decision: 'Toda saída é digitada, mas qualquer tecla completa: ninguém fica preso esperando.',
+        run: 'npm install\nnpm run dev',
+        commits: [['0b4e7f9', '', 'feat: boot CRT + scanlines', '25 set', 8, 301, 22], ['33f8b6e', '', 'feat: comando projetos com digitação', '12 out', 6, 120, 18], ['e91c0d4', 'v1.0', 'feat: easter egg sudo contratar', '22 out', 4, 61, 9]] }
+    ];
+  }
+  renderVals() {
+    const s = this.state || {};
+    const sel = s.sel ?? 0;
+    const step = s.step ?? 0;
+    const tab = s.tab ?? 'man';
+    const P = this.projects();
+    const cur = P[sel];
+    const on = ' background: oklch(0.87 0.21 145); color: oklch(0.12 0.02 155); text-shadow: none;';
+    const rows = P.map((p, i) => {
+      const n = p.pct / 10;
+      return { ...p, bar: '[' + '|'.repeat(n) + ' '.repeat(10 - n) + ']', mark: i === sel ? '▶' : '·', pressed: i === sel ? 'true' : 'false',
+        pick: () => this.setState({ sel: i, step: 0 }),
+        rowStyle: 'display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; min-height: 44px; width: 100%; box-sizing: border-box; border-top: 1px solid oklch(0.38 0.08 150 / 0.6);' + (i === sel ? on : '') };
+    });
+    const T = [['man', 'man'], ['log', 'git log'], ['readme', 'README']];
+    const tabs = T.map((t) => ({
+      label: t[1], pressed: tab === t[0] ? 'true' : 'false',
+      pick: () => this.setState({ tab: t[0] }),
+      style: 'flex: 1; text-align: center; min-height: 44px; border-right: 1px solid oklch(0.38 0.08 150);' + (tab === t[0] ? ' color: oklch(0.97 0.07 150); background: oklch(0.87 0.21 145 / 0.12); box-shadow: inset 0 -2px 0 oklch(0.87 0.21 145);' : ' color: oklch(0.66 0.13 147);')
+    }));
+    const opts = cur.flags.map((f, i) => ({
+      flag: f, help: cur.help[i], pressed: i === step ? 'true' : 'false',
+      run: () => this.setState({ step: i }),
+      style: 'display: flex; flex-direction: column; padding: 6px 10px; min-height: 44px; box-sizing: border-box; width: 100%;' + (i === step ? ' color: oklch(0.97 0.07 150); background: oklch(0.87 0.21 145 / 0.12); box-shadow: inset 2px 0 0 oklch(0.87 0.21 145);' : '')
+    }));
+    const C = cur.commits.map((c, i) => ({ hash: c[0], tag: c[1], hasTag: !!c[1], msg: c[2], date: c[3], files: c[4], add: c[5], del: c[6], i }));
+    const commits = C.slice().reverse().map((c) => ({
+      ...c, pressed: c.i === step ? 'true' : 'false',
+      pick: () => this.setState({ step: c.i }),
+      style: 'display: flex; flex-direction: column; padding: 6px 10px; min-height: 44px; width: 100%; box-sizing: border-box;' + (c.i === step ? on : '')
+    }));
+    return {
+      rows, tabs, opts, commits, cur, step,
+      commit: C[step],
+      isMan: tab === 'man', isLog: tab === 'log', isReadme: tab === 'readme',
+      stepNum: step + 1,
+      curFlag: cur.flags[step],
+      prev: () => this.setState({ step: (step + 2) % 3 }),
+      next: () => this.setState({ step: (step + 1) % 3 })
+    };
+  }
+}
+</script>
+</body>
+</html>

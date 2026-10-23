@@ -1,26 +1,175 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * Tokens — fósforo verde de monitor CRT (estética Matrix).
+ * Fundo nunca é preto puro: um quase-preto esverdeado deixa o verde "brilhar" sem vibrar.
+ * Contrastes sobre --color-screen:
+ *   phosphor ≈ 12:1 · phosphor-dim ≈ 5.2:1 · mint ≈ 15:1 · faint só para linhas decorativas.
+ */
+@theme {
+  --color-void: oklch(0.12 0.02 155);
+  --color-screen: oklch(0.155 0.03 152);
+  --color-phosphor: oklch(0.87 0.21 145);
+  --color-phosphor-dim: oklch(0.66 0.13 147);
+  --color-phosphor-faint: oklch(0.38 0.08 150);
+  --color-mint: oklch(0.97 0.07 150);
+  --color-danger: oklch(0.74 0.16 30);
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --animate-caret: caret 1s steps(1) infinite;
+  --animate-pulse-dot: pulse-dot 1.6s ease-in-out infinite;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  @keyframes caret {
+    50% { opacity: 0; }
+  }
+  @keyframes pulse-dot {
+    50% { opacity: 0.35; }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme inline {
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 }
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-void);
+  color: var(--color-phosphor);
+  font-family: var(--font-mono);
+}
+
+::selection {
+  background: var(--color-phosphor);
+  color: var(--color-void);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-mint);
+  outline-offset: 2px;
+}
+
+/* ---------- Camadas do monitor CRT (decorativas, aria-hidden) ---------- */
+
+.crt-glow {
+  text-shadow: 0 0 6px oklch(0.87 0.21 145 / 0.45);
+}
+
+.crt-screen {
+  background: radial-gradient(ellipse at center, var(--color-screen), var(--color-void) 130%);
+}
+
+/* scanlines */
+.crt-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgb(0 0 0 / 0.2) 0 1px, transparent 1px 3px);
+}
+
+/* vinheta + leve cintilação */
+.crt-screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 60%, rgb(0 0 0 / 0.55));
+  animation: flicker 5s infinite;
+}
+
+@keyframes flicker {
+  0%, 48%, 52%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
+
+/* faixa de luz que varre a tela */
+.crt-sweep {
+  position: absolute;
+  inset-inline: 0;
+  height: 140px;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.07;
+  background: linear-gradient(transparent, var(--color-phosphor), transparent);
+  animation: sweep 8s linear infinite;
+}
+
+@keyframes sweep {
+  from { top: -140px; }
+  to { top: 100%; }
+}
+
+/* ---------- Saída do terminal ---------- */
+
+/* a "impressão" da saída é feita por digitação, no componente TypeOut (views.tsx) */
+
+/*
+ * ASCII: a JetBrains (subset latin) não tem os caracteres de caixa, então
+ * usamos um mono do sistema para TODOS os glifos terem a mesma largura.
+ * O tamanho é ajustado pelo componente AsciiArt.
+ */
+.ascii {
+  font-family: "Cascadia Mono", Consolas, "SF Mono", Menlo, "DejaVu Sans Mono", monospace;
+  font-size: 10px;
+  line-height: 1.1;
+  white-space: pre;
+}
+
+.matrix-rain {
+  transition: opacity 0.6s ease-out;
+}
+
+/*
+ * README vindo do GitHub (HTML sanitizado em lib/github/html.ts). Sem classes no HTML,
+ * então estilizamos por tag — com os tokens do terminal e os "#" do markdown de volta.
+ */
+.readme {
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.readme > * + * { margin-top: 0.75rem; }
+.readme :is(h1, h2, h3, h4) { color: var(--color-mint); font-weight: 700; }
+.readme h1 { font-size: 1.125rem; }
+.readme h1::before { content: "# "; }
+.readme h2::before { content: "## "; }
+.readme h3::before { content: "### "; }
+.readme :is(p, li) { max-width: 62ch; }
+.readme a { color: var(--color-mint); text-decoration: underline; text-decoration-color: var(--color-phosphor-dim); text-underline-offset: 4px; }
+.readme a:hover { background: var(--color-phosphor); color: var(--color-void); text-shadow: none; }
+.readme ul { margin-left: 0.75rem; }
+.readme ul > li::before { content: "- "; color: var(--color-phosphor-dim); }
+.readme ol { margin-left: 1.5rem; list-style: decimal; }
+.readme :not(pre) > code { padding: 0 0.3em; background: oklch(0.38 0.08 150 / 0.35); }
+.readme pre {
+  overflow-x: auto;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.75rem;
+  background: oklch(0.38 0.08 150 / 0.35);
+  border: 1px solid var(--color-phosphor-faint);
+}
+.readme blockquote { padding-left: 0.75rem; border-left: 2px solid var(--color-phosphor-faint); color: var(--color-phosphor-dim); }
+.readme img { display: inline-block; max-width: 100%; height: auto; }
+.readme table { display: block; overflow-x: auto; border-collapse: collapse; font-size: 0.75rem; }
+.readme :is(th, td) { padding: 0.25rem 0.625rem; border: 1px solid var(--color-phosphor-faint); }
+.readme th { color: var(--color-mint); }
+.readme hr { border: 0; border-top: 1px dashed var(--color-phosphor-faint); }
+
+@media (prefers-reduced-motion: reduce) {
+  .crt-screen::after,
+  .crt-sweep,
+  .animate-caret,
+  .animate-pulse-dot {
+    animation: none;
+  }
+  .crt-sweep {
+    display: none;
+  }
+  .matrix-rain {
+    transition: none;
+  }
+}
+
